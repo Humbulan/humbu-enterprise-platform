@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrismJS Syntax Highlighter - Fixed</title>
+    <link rel="stylesheet" href="./prism-theme.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .code-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #555; border-bottom: 2px solid #667eea; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎨 PrismJS Syntax Highlighting - WORKING!</h1>
+    <p>If you see colored code below, the fix worked!</p>
+    
+    <div class="code-container">
+        <h2>JavaScript Example</h2>
+        <pre><code class="language-javascript">
+function calculateSum(a, b) {
+    // This is a comment
+    const result = a + b;
+    console.log("The sum is:", result);
+    return result;
+}
+
+// Call the function
+calculateSum(5, 3);
+
+class Calculator {
+    constructor() {
+        this.value = 0;
+    }
+    
+    add(num) {
+        this.value += num;
+        return this;
+    }
+}
+        </code></pre>
+    </div>
+
+    <div class="code-container">
+        <h2>HTML Example</h2>
+        <pre><code class="language-markup">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+    <style>
+        body { font-family: Arial; }
+        .container { margin: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello World</h1>
+        <p>This is a paragraph</p>
+        <button onclick="alert('Clicked!')">Click me</button>
+    </div>
+</body>
+</html>
+        </code></pre>
+    </div>
+
+    <div class="code-container">
+        <h2>CSS Example</h2>
+        <pre><code class="language-css">
+/* This is a CSS comment */
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.button {
+    background: linear-gradient(to bottom, #4CAF50, #45a049);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.button:hover {
+    background: linear-gradient(to bottom, #45a049, #4CAF50);
+    transform: translateY(-2px);
+}
+        </code></pre>
+    </div>
+
+    <!-- Load PrismJS at the end of body -->
+    <script src="./prism-core.js"></script>
+    <script>
+        // Force re-highlighting after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Prism) {
+                Prism.highlightAll();
+                console.log('PrismJS highlighting applied!');
+            } else {
+                console.error('PrismJS not loaded!');
+            }
+        });
+    </script>
+</body>
+</html>

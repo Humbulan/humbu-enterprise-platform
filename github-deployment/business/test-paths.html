@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>✅ PATH TEST - Container Solutions Pro</title>
+    <!-- Test the path from business/ directory -->
+    <link rel="stylesheet" href="static/css/prism.css">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .test-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 PATH VERIFICATION TEST</h1>
+        <p>This page tests if CSS and JS files load correctly from business/ directory</p>
+        
+        <div id="status">
+            <div class="status">Testing paths...</div>
+        </div>
+
+        <h2>Test Code Block (Should be Colored):</h2>
+        <pre><code class="language-javascript">
+// JavaScript test - should have colored syntax
+function verifyPaths() {
+    const cssLoaded = document.styleSheets.length > 0;
+    const prismLoaded = typeof Prism !== 'undefined';
+    
+    console.log('CSS loaded:', cssLoaded);
+    console.log('Prism loaded:', prismLoaded);
+    
+    return cssLoaded && prismLoaded;
+}
+
+// Call verification
+verifyPaths();
+        </code></pre>
+
+        <h2>Quick Links to New Pages:</h2>
+        <div style="margin: 20px 0;">
+            <button style="padding: 10px 20px; margin: 5px; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer;" 
+                    onclick="window.location.href='pricing.html'">
+                🎯 Pricing Page
+            </button>
+            <button style="padding: 10px 20px; margin: 5px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;" 
+                    onclick="window.location.href='clients/client-portal.html'">
+                🚀 Client Portal
+            </button>
+            <button style="padding: 10px 20px; margin: 5px; background: #8b5cf6; color: white; border: none; border-radius: 5px; cursor: pointer;" 
+                    onclick="window.location.href='templates/solutions/microservices.html'">
+                ⚡ Microservices
+            </button>
+            <button style="padding: 10px 20px; margin: 5px; background: #06b6d4; color: white; border: none; border-radius: 5px; cursor: pointer;" 
+                    onclick="window.location.href='templates/solutions/data-pipeline.html'">
+                📊 Data Pipeline
+            </button>
+        </div>
+    </div>
+
+    <!-- Test the path from business/ directory -->
+    <script src="static/js/prism.js"></script>
+    <script>
+        // Check if everything loaded correctly
+        setTimeout(() => {
+            const statusDiv = document.getElementById('status');
+            const cssLoaded = document.styleSheets.length > 0;
+            const prismLoaded = typeof Prism !== 'undefined';
+            const codeHighlighted = document.querySelector('code.language-javascript').innerHTML.includes('token');
+            
+            if (cssLoaded && prismLoaded && codeHighlighted) {
+                statusDiv.innerHTML = '<div class="status success">✅ SUCCESS! All paths working correctly!</div>';
+                console.log('🎉 ALL PATHS WORKING!');
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ ISSUE: Some paths not working</div>';
+                console.log('CSS:', cssLoaded, 'Prism:', prismLoaded, 'Highlight:', codeHighlighted);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

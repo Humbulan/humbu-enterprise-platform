@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Company Name - Code Generator</title>
+    <link rel="stylesheet" href="static/css/prism.css">
+    <style>
+        :root {
+            --primary: your-brand-color;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .card-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .language-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .code-section {
+            margin: 1.5rem 0;
+        }
+        
+        .code-section h3 {
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        pre[class*="language-"] {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text);
+            border: 1px solid #cbd5e1;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🚀 Your Company Name</h1>
+            <p>Enterprise-grade container configuration and deployment code</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Docker Configurations -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Docker Environment</h2>
+                <span class="language-badge">Production Ready</span>
+            </div>
+            
+            <div class="code-section">
+                <h3>Multi-stage Dockerfile (Corrected)</h3>
+                <pre><code class="language-dockerfile">
+# Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Runtime stage
+FROM node:18-alpine AS runtime
+WORKDIR /app
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+
+USER nextjs
+EXPOSE 3000
+ENV NODE_ENV production
+
+CMD ["node", "server.js"]
+                </code></pre>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="copyCode(this)">Copy Code</button>
+                    <button class="btn btn-secondary" onclick="downloadCode('Dockerfile', this)">Download</button>
+                </div>
+            </div>
+
+            <div class="code-section">
+                <h3>Docker Compose Stack (Corrected)</h3>
+                <pre><code class="language-yaml">
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/myapp
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+volumes:
+  db_data:
+  redis_data:
+                </code></pre>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="copyCode(this)">Copy Code</button>
+                    <button class="btn btn-secondary" onclick="downloadCode('docker-compose.yml', this)">Download</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Quick Start Guide</h2>
+                <span class="language-badge">Tutorial</span>
+            </div>
+            
+            <div class="code-section">
+                <h3>Deployment Commands</h3>
+                <pre><code class="language-bash">
+#!/bin/bash
+
+# Quick deployment script
+echo "🚀 Deploying Container Stack..."
+
+# Build the Docker image
+docker build -t my-app:latest .
+
+# Start the stack
+docker-compose up -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f app
+
+echo "✅ Deployment complete! Access your app at http://localhost:3000"
+                </code></pre>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="copyCode(this)">Copy Code</button>
+                    <button class="btn btn-secondary" onclick="downloadCode('deploy.sh', this)">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load PrismJS -->
+    <script src="static/js/prism.js"></script>
+    
+    <!-- Enhanced Language Definitions -->
+    <script>
+        // Add Dockerfile syntax
+        Prism.languages.dockerfile = {
+            'comment': { pattern: /#.*/, greedy: true },
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'keyword': { pattern: /(FROM|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL)\b/, lookbehind: true, greedy: true },
+            'function': /\b(?:MAINTAINER)\b/,
+            'number': /\b\d+\b/,
+            'operator': /\\/
+        };
+
+        // Add YAML syntax
+        Prism.languages.yaml = {
+            'comment': /#.*/,
+            'key': { pattern: /(\s*(?:^|[:\-,[{\r\n?])[ \t]*(?:![^\s]+)?[ \t]*)[^\r\n{[\]},#\s]+?(?=\s*:\s)/, lookbehind: true, alias: 'atrule' },
+            'string': { pattern: /([:\-,[{]\s*(?:![^\s]+)?[ \t]*)("|')(?:(?!\2)[^\\\r\n]|\\.)*\2(?=[ \t]*(?:$|,|]|}))/m, lookbehind: true, greedy: true },
+            'number': { pattern: /([:\-,[{]\s*(?:![^\s]+)?[ \t]*)[+-]?(?:\d+\.?\d*|\.?\d+)[ \t]*(?=$|,|]|})/im, lookbehind: true },
+            'boolean': { pattern: /([:\-,[{]\s*(?:![^\s]+)?[ \t]*)(?:true|false)[ \t]*(?=$|,|]|})/im, lookbehind: true, alias: 'important' },
+            'punctuation': /---|[:[\]{}\-,|>?]|\.\.\./
+        };
+
+        // Add Bash syntax
+        Prism.languages.bash = {
+            'comment': [{ pattern: /(^|[^"{\\$])#.*/, lookbehind: true }, { pattern: /^#!.+/, greedy: true }],
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'variable': /\$(?:\w+|[?$!@#*_-])/,
+            'function': /\b(?:echo|printf|cd|pwd|ls|cat|grep|find|docker|kubectl|set|export)\b/,
+            'keyword': /\b(?:if|then|else|elif|fi|for|while|do|done|case|esac|function)\b/,
+            'builtin': /\b(?:true|false|exit|return)\b/,
+            'number': /\b\d+\b/,
+            'operator': /&&|\|\||[=!<>]=?|[-+*/%]|\.{3}/
+        };
+    </script>
+
+    <!-- Utility Functions -->
+    <script>
+        function copyCode(button) {
+            const pre = button.closest('.code-section').querySelector('pre');
+            const code = pre.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.style.background = '#10b981';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function downloadCode(filename, button) {
+            const pre = button.closest('.code-section').querySelector('pre');
+            const code = pre.textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            const originalText = button.textContent;
+            button.textContent = '✅ Downloaded!';
+            button.style.background = '#10b981';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Prism) {
+                Prism.highlightAll();
+                console.log('✅ Container project ready!');
+            }
+        });
+    </script>
+</body>
+</html>
