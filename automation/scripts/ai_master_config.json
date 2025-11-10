@@ -1,0 +1,20 @@
+{
+  "enterprise_integration": {
+    "enabled": true,
+    "data_source": "./master_data.json",
+    "update_frequency": "daily",
+    "last_sync": "2025-10-09T22:23:24.480675"
+  },
+  "data_mapping": {
+    "productivity_score": "productivity_score",
+    "focus_score": "focus_score",
+    "screen_time_metric": "screen_time_metric",
+    "active_goals": "active_goals",
+    "enterprise_metrics": "enterprise_metrics"
+  },
+  "automation_schedule": {
+    "morning_routine": "0 8 * * *",
+    "data_refresh": "*/30 * * * *",
+    "github_sync": "0 9 * * *"
+  }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humbu Wanderme - Secure Payments</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #00A859 0%, #008A4C 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; padding: 20px; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; font-weight: bold; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        .payment-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); margin-bottom: 20px; }
+        .service-item { background: #f8fff8; border: 2px solid #e0f7e0; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .service-item h3 { color: #00A859; margin-bottom: 10px; font-size: 18px; }
+        .service-item p { color: #666; margin-bottom: 10px; font-size: 14px; }
+        .price { color: #00A859; font-size: 24px; font-weight: bold; margin: 15px 0; }
+        .paystack-btn { background: linear-gradient(135deg, #00A859 0%, #008A4C 100%); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: all 0.3s ease; }
+        .paystack-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 168, 89, 0.4); }
+        .custom-amount { background: #f8fff8; border: 2px dashed #00A859; border-radius: 10px; padding: 20px; margin-top: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; color: #00A859; margin-bottom: 5px; font-weight: bold; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #e0f7e0; border-radius: 8px; font-size: 16px; }
+        .input-group input:focus { outline: none; border-color: #00A859; }
+        .business-info { background: rgba(255, 255, 255, 0.1); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Humbu Wanderme Trading Enterprise</h1>
+            <p>Secure Payment Portal - Always Online</p>
+        </div>
+        
+        <div class="payment-card">
+            <div class="service-item">
+                <h3>Business Consultation Service</h3>
+                <p>Professional business advisory and consultation</p>
+                <div class="price">ZAR 500.00</div>
+                <button class="paystack-btn" onclick="initiatePayment(50000, 'Business Consultation')">Pay ZAR 500</button>
+            </div>
+            
+            <div class="service-item">
+                <h3>Trading Service Package</h3>
+                <p>Complete trading service package</p>
+                <div class="price">ZAR 1,200.00</div>
+                <button class="paystack-btn" onclick="initiatePayment(120000, 'Trading Service')">Pay ZAR 1,200</button>
+            </div>
+            
+            <div class="custom-amount">
+                <h3 style="color: #00A859; margin-bottom: 15px; text-align: center;">Custom Amount</h3>
+                <div class="input-group">
+                    <label>Your Email</label>
+                    <input type="email" id="customerEmail" placeholder="Enter your email address">
+                </div>
+                <div class="input-group">
+                    <label>Amount in ZAR</label>
+                    <input type="number" id="customAmount" placeholder="Enter amount">
+                </div>
+                <button class="paystack-btn" onclick="initiateCustomPayment()">Pay Custom Amount</button>
+            </div>
+        </div>
+        
+        <div class="business-info">
+            <strong>Humbu Wanderme Trading Enterprise (Pty) Ltd</strong><br>
+            Registration: 2024/626727/07 | Director: Humbulani Mudau<br>
+            Contact: 0794658481 | getfriendhumbulani30@gmail.com
+        </div>
+    </div>
+
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+        function initiatePayment(amount, productName) {
+            var customerEmail = document.getElementById('customerEmail').value;
+            if (!customerEmail) {
+                customerEmail = prompt('Please enter your email address:') || 'customer@email.com';
+            }
+            var handler = PaystackPop.setup({
+                key: 'pk_test_519381663ad7363cdd271a0d1cd5a70c392c874d',
+                email: customerEmail,
+                amount: amount,
+                currency: 'ZAR',
+                ref: 'HW_' + Math.floor((Math.random() * 1000000000) + 1),
+                metadata: {
+                    custom_fields: [
+                        { display_name: "Product Name", variable_name: "product_name", value: productName },
+                        { display_name: "Business Name", variable_name: "business_name", value: "Humbu Wanderme Trading Enterprise" }
+                    ]
+                },
+                callback: function(response) {
+                    alert('Payment Successful! Reference: ' + response.reference + '\nThank you for your business!');
+                },
+                onClose: function() {
+                    alert('Payment window closed. You can try again when ready.');
+                }
+            });
+            handler.openIframe();
+        }
+
+        function initiateCustomPayment() {
+            var email = document.getElementById('customerEmail').value;
+            var amount = document.getElementById('customAmount').value;
+            if (!email) { alert('Please enter your email address'); return; }
+            if (!amount || amount < 1) { alert('Please enter a valid amount'); return; }
+            var amountInCents = Math.round(amount * 100);
+            initiatePayment(amountInCents, 'Custom Payment');
+        }
+    </script>
+</body>
+</html>

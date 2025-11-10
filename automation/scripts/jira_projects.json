@@ -1,0 +1,62 @@
+{
+  "business_development": {
+    "name": "Business Growth Initiative",
+    "sprints": [
+      {
+        "name": "Sprint 1 - Market Expansion",
+        "start_date": "2025-10-09",
+        "end_date": "2025-10-23",
+        "tasks": [
+          {
+            "id": "BD-1",
+            "name": "Competitor Analysis",
+            "status": "In Progress",
+            "priority": "High"
+          },
+          {
+            "id": "BD-2",
+            "name": "Customer Survey",
+            "status": "To Do",
+            "priority": "Medium"
+          },
+          {
+            "id": "BD-3",
+            "name": "Marketing Strategy",
+            "status": "To Do",
+            "priority": "High"
+          }
+        ]
+      }
+    ]
+  },
+  "product_development": {
+    "name": "New Product Launch",
+    "sprints": [
+      {
+        "name": "Sprint 1 - MVP Development",
+        "start_date": "2025-10-09",
+        "end_date": "2025-10-30",
+        "tasks": [
+          {
+            "id": "PD-1",
+            "name": "Feature Planning",
+            "status": "Done",
+            "priority": "High"
+          },
+          {
+            "id": "PD-2",
+            "name": "UI/UX Design",
+            "status": "In Progress",
+            "priority": "High"
+          },
+          {
+            "id": "PD-3",
+            "name": "Backend Development",
+            "status": "To Do",
+            "priority": "Medium"
+          }
+        ]
+      }
+    ]
+  }
+}

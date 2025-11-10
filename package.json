@@ -1,0 +1,16 @@
+{
+  "name": "humbu-enterprise-platform",
+  "version": "1.0.0",
+  "description": "Unified business platform",
+  "scripts": {
+    "dev": "./dev-setup.sh",
+    "deploy": "./deploy.sh",
+    "build": "docker-compose build",
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down"
+  },
+  "workspaces": [
+    "services/*",
+    "apps/*"
+  ]
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Humbu Wandeme Digital</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .ai-chat { background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0; }
+        .chat-messages { height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; background: white; margin-bottom: 1rem; }
+        .message { margin: 0.5rem 0; padding: 0.8rem; border-radius: 8px; max-width: 80%; }
+        .user { background: #007bff; color: white; margin-left: auto; text-align: right; }
+        .ai { background: #e9ecef; text-align: left; }
+        .typing { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Humbu Wandeme Digital</div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
+                <li class="nav-item"><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="resources.html" class="nav-link">Resources</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="partnerships.html" class="nav-link">Partnerships</a></li>
+                <li class="nav-item"><a href="ai-assistant.html" class="nav-link active">AI Assistant</a></li>
+                <li class="nav-item"><a href="../payment-portal.html" class="nav-link">Payments</a></li>
+                <li class="nav-item"><a href="../dashboard.html" class="nav-link btn">Client Portal</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>AI Business Assistant</h1>
+            <p>Get instant insights and recommendations for your business</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="ai-chat">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">🤖 Hello! I'm your AI Business Assistant. I can help you with:<br>
+                    • Business insights and analytics<br>
+                    • Customer segmentation<br> 
+                    • Product recommendations<br>
+                    • Market analysis<br>
+                    How can I assist your business today?</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="userInput" placeholder="Ask about business insights, customers, or products..." 
+                           style="flex: 1; padding: 0.8rem; border: 2px solid #ddd; border-radius: 6px;" 
+                           onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button onclick="sendMessage()" class="btn">Send</button>
+                </div>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                    <strong>Try asking:</strong> "Show me customer segments" or "Analyze my product performance"
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const messages = document.getElementById('chatMessages');
+            
+            if (!input.value.trim()) return;
+            
+            // Add user message
+            const userMessage = input.value;
+            messages.innerHTML += `<div class="message user">${userMessage}</div>`;
+            input.value = '';
+            
+            // Add typing indicator
+            messages.innerHTML += `<div class="message ai typing" id="typing">AI is thinking...</div>`;
+            messages.scrollTop = messages.scrollHeight;
+            
+            try {
+                // Test different API endpoints on port 8001
+                const endpoints = [
+                    '/api/ai/insights',
+                    '/api/ai/basket-analysis', 
+                    '/api/ai/customer-segments',
+                    '/api/data',
+                    '/api/stats'
+                ];
+                
+                let response;
+                let apiResponse = '';
+                
+                // Try different endpoints
+                for (const endpoint of endpoints) {
+                    try {
+                        response = await fetch(`http://localhost:8001${endpoint}`, {
+                            method: 'GET',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer PREMIUM_KEY_A1B2C3D4'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            apiResponse = `📊 ${endpoint.replace('/api/ai/', '').replace('/api/', '')}: ${JSON.stringify(data).substring(0, 200)}...`;
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                
+                // Remove typing indicator
+                document.getElementById('typing').remove();
+                
+                if (apiResponse) {
+                    messages.innerHTML += `<div class="message ai">${apiResponse}</div>`;
+                } else {
+                    // Fallback response
+                    messages.innerHTML += `<div class="message ai">I understand you asked about "${userMessage}". While I process your specific request, here are some general business insights:<br><br>
+                    • Customer segmentation shows 3 main groups<br>
+                    • Top products are generating 80% of revenue<br>
+                    • Market analysis indicates growth opportunities in AI services<br><br>
+                    For detailed analysis, please ensure the AI API is running on port 8001.</div>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('typing').remove();
+                messages.innerHTML += `<div class="message ai">🔧 AI Service Connection<br><br>
+                Your Enhanced AI API needs to be running. Start it with:<br>
+                <code>python3 enhanced_ai_api.py</code><br><br>
+                Currently running on: http://localhost:8001</div>`;
+            }
+            
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Allow Enter key to send message
+        document.getElementById('userInput').focus();
+    </script>
+</body>
+</html>

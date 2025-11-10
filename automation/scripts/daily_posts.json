@@ -1,0 +1,30 @@
+{
+  "monday": {
+    "message": "\ud83d\ude80 New week, new opportunities! What are you working on this week? #MotivationMonday #BusinessGrowth",
+    "hashtags": "#MondayMotivation #Business #Growth #Entrepreneur"
+  },
+  "tuesday": {
+    "message": "\ud83d\udca1 Tip of the day: Consistency beats intensity. Small daily improvements lead to stunning results! #TuesdayTips",
+    "hashtags": "#BusinessTips #Success #Productivity #Growth"
+  },
+  "wednesday": {
+    "message": "\ud83c\udf05 Halfway through the week! Keep pushing - your breakthrough might be just around the corner. #WednesdayWisdom",
+    "hashtags": "#Midweek #Motivation #Business #Success"
+  },
+  "thursday": {
+    "message": "\ud83d\udcc8 Progress check: What have you accomplished this week? Time to finish strong! #ThrowbackThursday",
+    "hashtags": "#Progress #Achievement #Business #Goals"
+  },
+  "friday": {
+    "message": "\ud83c\udf89 Weekend planning! What business goals will you crush today? #FridayFeeling #BusinessSuccess",
+    "hashtags": "#Friday #Weekend #Business #Achievement"
+  },
+  "saturday": {
+    "message": "\ud83d\udd0b Weekend recharge! Perfect time for business planning and skill development. #SaturdayVibes",
+    "hashtags": "#Weekend #Planning #BusinessGrowth #Learning"
+  },
+  "sunday": {
+    "message": "\ud83d\udcdd Sunday preparation: Get ready for an amazing week ahead! Plan your success. #SundayFunday",
+    "hashtags": "#Sunday #Planning #Success #Business"
+  }
+}

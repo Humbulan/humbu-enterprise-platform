@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug PrismJS Loading</title>
+</head>
+<body>
+    <h1>Debug Information</h1>
+    
+    <div id="status">Testing...</div>
+    
+    <pre><code class="language-javascript">
+// Test code that should be highlighted
+function test() {
+    return "Hello World";
+}
+    </code></pre>
+
+    <script>
+        // Test if Prism exists
+        setTimeout(() => {
+            const status = document.getElementById('status');
+            if (window.Prism) {
+                status.innerHTML = '✅ PrismJS is loaded!';
+                status.style.color = 'green';
+                Prism.highlightAll();
+            } else {
+                status.innerHTML = '❌ PrismJS failed to load';
+                status.style.color = 'red';
+            }
+        }, 1000);
+    </script>
+    
+    <!-- Try loading prism -->
+    <script src="./prism-core.js"></script>
+</body>
+</html>

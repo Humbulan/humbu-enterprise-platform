@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microservices Solution - Container Solutions Pro</title>
+    <link rel="stylesheet" href="../../static/css/prism.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Microservices Architecture</h1>
+        
+        <div class="solution-info">
+            <h2>Complete Microservices Stack</h2>
+            <p>Production-ready microservices with API Gateway, Service Discovery, and Monitoring</p>
+        </div>
+
+        <div class="code-section">
+            <h3>Docker Compose - Microservices</h3>
+            <pre><code class="language-yaml">
+version: '3.8'
+
+services:
+  # API Gateway
+  gateway:
+    build: ./gateway
+    ports:
+      - "80:8080"
+    environment:
+      - SERVICE_REGISTRY=http://registry:8761
+    depends_on:
+      - registry
+      - user-service
+      - order-service
+
+  # Service Registry
+  registry:
+    image: Netflix/eureka-server
+    ports:
+      - "8761:8761"
+
+  # Microservices
+  user-service:
+    build: ./user-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+      - DATABASE_URL=postgresql://user:pass@user-db:5432/users
+
+  order-service:
+    build: ./order-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+      - DATABASE_URL=postgresql://user:pass@order-db:5432/orders
+
+  # Databases
+  user-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  order-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+            </code></pre>
+        </div>
+
+        <div class="code-section">
+            <h3>Kubernetes Deployment</h3>
+            <pre><code class="language-yaml">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: user-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: EUREKA_SERVER
+          value: "http://registry:8761/eureka"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+            </code></pre>
+        </div>
+    </div>
+
+    <script src="../../static/js/prism.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .solution-info { background: #f0f8ff; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .code-section { margin: 30px 0; }
+    </style>
+</body>
+</html>
