@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment - HUMBU WANDEME TRADING ENTERPRISE</title>
+    <link rel="stylesheet" href="static/css/prism.css">
+    <style>
+        :root { --primary: #2563eb; --secondary: #1e40af; --success: #10b981; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8fafc; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 2rem; text-align: center; border-radius: 15px; margin-bottom: 2rem; }
+        .payment-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1rem 0; }
+        .btn { background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; margin: 10px 0; }
+        .btn:hover { background: var(--secondary); }
+        .plan-summary { background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; }
+        .company-info { text-align: center; margin: 1rem 0; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Secure Payment</h1>
+            <p>HUMBU WANDEME TRADING ENTERPRISE</p>
+        </div>
+
+        <div class="company-info">
+            <strong>📧 humbulani@humbu.store | 📞 079 465 8481</strong>
+        </div>
+
+        <div class="payment-card">
+            <div class="plan-summary">
+                <h3 id="selectedPlan">Professional Container Solution - R1,299</h3>
+                <p>One-time setup fee - Complete container architecture</p>
+            </div>
+
+            <div class="payment-options">
+                <h3>Choose Payment Method</h3>
+                
+                <!-- PayPal Option -->
+                <div style="border: 2px solid #0070ba; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; background: #f8fbff;">
+                    <h4>🅿️ PayPal Payment</h4>
+                    <p>Pay securely with your PayPal account</p>
+                    <button class="btn" onclick="payWithPayPal()" style="background: #0070ba;">Pay with PayPal</button>
+                </div>
+
+                <!-- Bank Transfer Option -->
+                <div style="border: 2px solid #10b981; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; background: #f0fdf9;">
+                    <h4>🏦 Bank Transfer</h4>
+                    <p>Direct bank transfer details</p>
+                    <button class="btn" onclick="showBankDetails()" style="background: #10b981;">View Bank Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="payment-card" id="bankDetails" style="display: none;">
+            <h3>Bank Transfer Details</h3>
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                <p><strong>Bank:</strong> [Your Bank Name]</p>
+                <p><strong>Account Holder:</strong> HUMBU WANDEME TRADING ENTERPRISE</p>
+                <p><strong>Account Number:</strong> [Your Account Number]</p>
+                <p><strong>Reference:</strong> Container Solution [Your Name]</p>
+                <p><strong>Amount:</strong> R1,299</p>
+            </div>
+            <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+                Email proof of payment to: humbulani@humbu.store
+            </p>
+        </div>
+
+        <!-- Success Message -->
+        <div class="payment-card" id="successMessage" style="display: none; text-align: center;">
+            <h2 style="color: var(--success);">✅ Payment Instructions Sent!</h2>
+            <p>Check your email for payment confirmation and next steps.</p>
+            <button class="btn" onclick="window.location.href='clients/client-portal.html'">Access Client Portal</button>
+        </div>
+    </div>
+
+    <script>
+        function payWithPayPal() {
+            // Redirect to PayPal or show PayPal email
+            alert('Please send R1,299 to: humbulani@humbu.store via PayPal\n\nWe will email you confirmation and next steps.');
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        function showBankDetails() {
+            document.getElementById('bankDetails').style.display = 'block';
+        }
+
+        // Get plan from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = urlParams.get('plan') || 'professional';
+        const plans = {
+            starter: { name: 'Starter Container Setup', price: 499 },
+            professional: { name: 'Professional Container Solution', price: 1299 },
+            enterprise: { name: 'Enterprise Full Architecture', price: 2999 }
+        };
+        
+        if (plans[plan]) {
+            document.getElementById('selectedPlan').textContent = 
+                `${plans[plan].name} - R${plans[plan].price}`;
+        }
+    </script>
+</body>
+</html>

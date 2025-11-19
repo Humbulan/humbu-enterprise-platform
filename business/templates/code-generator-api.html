@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Generator API</title>
+    <link rel="stylesheet" href="static/css/prism.css">
+</head>
+<body>
+    <h1>Container Code Generator API</h1>
+    <div id="output"></div>
+    <script src="static/js/prism.js"></script>
+    <script>
+        // This would connect to your backend API
+        function generateCode(config) {
+            // Your business logic here
+            return {
+                dockerfile: `# Generated Dockerfile\nFROM ${config.runtime}`,
+                compose: `# Generated docker-compose.yml\nversion: '3.8'`
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Solutions Pro - Main Demo</title>
+    <!-- FIXED PATH -->
+    <link rel="stylesheet" href="../static/css/prism.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .code-section { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Container Solutions Pro - Working Demo</h1>
+        <p>All code examples with proper syntax highlighting</p>
+        
+        <div class="code-section">
+            <h2>✅ Corrected Docker Configuration</h2>
+            <pre><code class="language-dockerfile">
+# Multi-stage Dockerfile - FIXED
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:18-alpine AS runtime
+WORKDIR /app
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+
+USER nextjs
+EXPOSE 3000
+ENV NODE_ENV production
+
+CMD ["node", "server.js"]
+            </code></pre>
+        </div>
+
+        <div class="code-section">
+            <h2>✅ Corrected Docker Compose</h2>
+            <pre><code class="language-yaml">
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/myapp
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+volumes:
+  db_data:
+  redis_data:
+            </code></pre>
+        </div>
+    </div>
+
+    <!-- FIXED PATH -->
+    <script src="../static/js/prism.js"></script>
+    <script>
+        // Add language definitions
+        Prism.languages.dockerfile = {
+            'comment': { pattern: /#.*/, greedy: true },
+            'keyword': { pattern: /(FROM|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG)\b/, lookbehind: true }
+        };
+
+        Prism.languages.yaml = {
+            'comment': /#.*/,
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'number': /\b\d+\b/
+        };
+
+        // Initialize highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Prism) {
+                Prism.highlightAll();
+                console.log('✅ Main demo highlighting applied!');
+            }
+        });
+    </script>
+</body>
+</html>
