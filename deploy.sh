@@ -11,5 +11,5 @@ kubectl apply -f infrastructure/kubernetes/
 echo "✅ Deployment complete!"
 echo "🌐 Access services at:"
 echo "   Web Frontend: http://localhost"
-echo "   API Gateway: http://localhost:8080"
+echo "   API Gateway: http://localhost:8102"
 echo "   AI Agent: http://localhost:8001"
