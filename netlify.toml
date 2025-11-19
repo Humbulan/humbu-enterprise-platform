@@ -1,19 +1,8 @@
 [build]
-  publish = "business"
-  command = "echo '🚀 HUMBU WANDEME TRADING ENTERPRISE - Building container solutions platform'"
-
-[build.environment]
-  NODE_VERSION = "18"
+publish = "business"
+command = "echo 'HUMBU WANDEME TRADING ENTERPRISE - Deploying static assets'"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# Security headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
+from = "/*"
+to = "/index.html"
+status = 200
