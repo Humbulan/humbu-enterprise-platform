@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Test - Port 8004</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .chat { border: 1px solid #ccc; padding: 20px; height: 300px; overflow-y: auto; margin: 20px 0; }
+        .message { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .user { background: #007bff; color: white; }
+        .ai { background: #28a745; color: white; }
+        .error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🧠 AI Test - Port 8004</h1>
+    
+    <div class="chat" id="chat">
+        <div class="message">Ready to test AI on port 8004...</div>
+    </div>
+    
+    <input type="text" id="input" placeholder="Ask about business..." style="width: 70%; padding: 10px;">
+    <button onclick="askAI()" style="padding: 10px 20px;">Ask AI</button>
+    
+    <div style="margin-top: 20px;">
+        <button onclick="testConnection()" style="background: #6c757d;">Test Connection</button>
+        <button onclick="clearChat()" style="background: #ffc107;">Clear Chat</button>
+    </div>
+
+    <script>
+        function addMessage(type, text) {
+            const chat = document.getElementById('chat');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            chat.appendChild(msg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function testConnection() {
+            addMessage('', 'Testing connection to port 8004...');
+            try {
+                const response = await fetch('http://localhost:8004/ai/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: 'test'})
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('ai', `✅ CONNECTED! AI says: ${data.response}`);
+                } else {
+                    addMessage('error', `❌ Connection failed: ${response.status}`);
+                }
+            } catch (error) {
+                addMessage('error', `❌ Cannot connect: ${error.message}`);
+            }
+        }
+
+        async function askAI() {
+            const input = document.getElementById('input');
+            const question = input.value;
+            if (!question) return;
+            
+            addMessage('user', `You: ${question}`);
+            input.value = '';
+            
+            // Add business context
+            const context = `[BUSINESS: Revenue=$32480.75, Customers=189, Satisfaction=4.9/5, Transactions=111] `;
+            const fullMessage = context + question;
+            
+            try {
+                const response = await fetch('http://localhost:8004/ai/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: fullMessage})
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('ai', `AI: ${data.response}`);
+                } else {
+                    addMessage('error', `Error: ${response.status}`);
+                }
+            } catch (error) {
+                addMessage('error', `Failed: ${error.message}`);
+            }
+        }
+
+        function clearChat() {
+            document.getElementById('chat').innerHTML = '<div class="message">Chat cleared</div>';
+        }
+
+        // Allow Enter key
+        document.getElementById('input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') askAI();
+        });
+
+        // Test connection on load
+        setTimeout(testConnection, 1000);
+    </script>
+</body>
+</html>

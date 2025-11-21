@@ -1,0 +1,35 @@
+[HPM] Proxy created: /  -> http://localhost:8201
+[HPM] Proxy rewrite rule created: "^/api/users" ~> "/users"
+[HPM] Proxy created: /  -> http://localhost:8202
+[HPM] Proxy rewrite rule created: "^/api/auth" ~> "/auth"
+[HPM] Proxy created: /  -> http://localhost:8203
+[HPM] Proxy rewrite rule created: "^/api/payments" ~> "/payments"
+[HPM] Proxy created: /  -> http://localhost:8204
+[HPM] Proxy rewrite rule created: "^/api/notifications" ~> "/notifications"
+🌐 HTTP Gateway (No SSL) running on port 8102
+
+🏰 HUMBU MICROSERVICES PLATFORM - NO SSL VERSION
+===============================================
+✅ Microservices Architecture
+✅ API Gateway Routing
+✅ Service Discovery
+⚠️  SSL Disabled for Immediate Testing
+
+🌐 ACCESS POINTS:
+   HTTP:  http://localhost:8102/health
+
+🔧 MICROSERVICES:
+   📍 user-service: http://localhost:8201
+   📍 auth-service: http://localhost:8202
+   📍 payment-service: http://localhost:8203
+   📍 notification-service: http://localhost:8204
+
+🚀 MICROSERVICES READY FOR TESTING!
+
+🔧 TEST ENDPOINTS:
+   Health:        curl http://localhost:8102/health
+   Users:         curl http://localhost:8102/api/users
+   Services:      curl http://localhost:8102/api/services/status
+   Direct Users:  curl http://localhost:8102/api/direct/users
+(node:16828) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

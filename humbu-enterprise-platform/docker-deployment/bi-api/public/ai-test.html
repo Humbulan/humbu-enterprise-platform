@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Context Test</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .chat { border: 1px solid #ccc; padding: 20px; height: 400px; overflow-y: auto; margin: 20px 0; }
+        .message { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .user { background: #007bff; color: white; }
+        .ai { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <h1>🧠 AI Context Test</h1>
+    
+    <div class="chat" id="chat">
+        <div class="message ai">AI is ready! Ask about your business.</div>
+    </div>
+    
+    <input type="text" id="input" placeholder="Ask a question..." style="width: 70%; padding: 10px;">
+    <button onclick="askAI()" style="padding: 10px 20px;">Ask AI</button>
+    
+    <div style="margin-top: 20px;">
+        <h3>Test Ports:</h3>
+        <button onclick="testPort(8001)">Test 8001</button>
+        <button onclick="testPort(8004)">Test 8004</button>
+        <button onclick="testPort(8000)">Test 8000</button>
+    </div>
+
+    <script>
+        function addMessage(type, text) {
+            const chat = document.getElementById('chat');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            chat.appendChild(msg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function testPort(port) {
+            addMessage('ai', `Testing port ${port}...`);
+            try {
+                const response = await fetch(`http://localhost:${port}/ai/chat`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: 'test'})
+                });
+                if (response.ok) {
+                    addMessage('ai', `✅ Port ${port} is WORKING!`);
+                } else {
+                    addMessage('ai', `❌ Port ${port} error: ${response.status}`);
+                }
+            } catch (error) {
+                addMessage('ai', `❌ Port ${port} failed: ${error.message}`);
+            }
+        }
+
+        async function askAI() {
+            const input = document.getElementById('input');
+            const question = input.value;
+            if (!question) return;
+            
+            addMessage('user', question);
+            input.value = '';
+            
+            // Try different ports
+            const ports = [8004, 8001, 8000];
+            let success = false;
+            
+            for (const port of ports) {
+                try {
+                    const metrics = {
+                        revenue: '32480.75',
+                        customers: 189,
+                        satisfaction: 4.9,
+                        transactions: 111
+                    };
+                    
+                    const context = `[BUSINESS: Revenue=$${metrics.revenue}, Customers=${metrics.customers}, Satisfaction=${metrics.satisfaction}/5] `;
+                    const fullMessage = context + question;
+                    
+                    const response = await fetch(`http://localhost:${port}/ai/chat`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({message: fullMessage})
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        addMessage('ai', `✅ AI (port ${port}): ${data.response}`);
+                        success = true;
+                        break;
+                    }
+                } catch (error) {
+                    // Try next port
+                }
+            }
+            
+            if (!success) {
+                addMessage('ai', '❌ No AI servers found. Start: python3 simple_ai_bridge_fixed.py 8004');
+            }
+        }
+
+        // Allow Enter key
+        document.getElementById('input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') askAI();
+        });
+    </script>
+</body>
+</html>

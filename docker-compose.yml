@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  user-service:
+    image: humbu/user-service:latest
+    ports:
+      - "8201:8201"
+    networks:
+      - humbu-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8201/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  auth-service:
+    image: humbu/auth-service:latest
+    ports:
+      - "8202:8202"
+    networks:
+      - humbu-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8202/auth"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  payment-service:
+    image: humbu/payment-service:latest
+    ports:
+      - "8203:8203"
+    networks:
+      - humbu-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8203/payments"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  notification-service:
+    image: humbu/notification-service:latest
+    ports:
+      - "8204:8204"
+    networks:
+      - humbu-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8204/notifications"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  humbu-network:
+    driver: bridge

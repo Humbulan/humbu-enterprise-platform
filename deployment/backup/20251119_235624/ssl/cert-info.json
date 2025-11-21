@@ -1,0 +1,19 @@
+{
+  "certificates": {
+    "platform": {
+      "domain": "platform.humbu.store",
+      "cert_file": "cert.pem",
+      "key_file": "key.pem",
+      "expires": "2026-11-19",
+      "type": "self-signed"
+    },
+    "internal": {
+      "domain": "internal.humbu.store", 
+      "cert_file": "internal-cert.pem",
+      "key_file": "internal-key.pem",
+      "expires": "2026-11-19",
+      "type": "self-signed"
+    }
+  },
+  "notes": "For production, replace with certificates from Let's Encrypt or commercial CA"
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Alert Dashboard - Enhanced</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .alerts-container { margin: 30px 0; }
+        .alert { padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 5px solid; }
+        .alert.critical { background: #ffe6e6; border-left-color: #ff4444; }
+        .alert.warning { background: #fff3cd; border-left-color: #ffc107; }
+        .alert.success { background: #d4edda; border-left-color: #28a745; }
+        .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 30px 0; }
+        .metric { background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Smart Alert Dashboard</h1>
+            <p>Real-time Business Metric Monitoring</p>
+        </div>
+        
+        <div id="metrics" class="metrics">
+            <!-- Metrics will be loaded here -->
+        </div>
+        
+        <div id="alerts" class="alerts-container">
+            <!-- Alerts will be loaded here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="loadAlerts()" style="padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                🔄 Refresh Alerts
+            </button>
+        </div>
+    </div>
+
+    <script>
+        async function loadAlerts() {
+            try {
+                const response = await fetch('http://localhost:8001/api/alerts');
+                const data = await response.json();
+                
+                // Update metrics
+                const metricsHtml = `
+                    <div class="metric">
+                        <h3>💰 Revenue</h3>
+                        <div style="font-size: 1.5em; font-weight: bold;">$${data.current_metrics.revenue.toLocaleString()}</div>
+                    </div>
+                    <div class="metric">
+                        <h3>👥 Customers</h3>
+                        <div style="font-size: 1.5em; font-weight: bold;">${data.current_metrics.customers}</div>
+                    </div>
+                    <div class="metric">
+                        <h3>⭐ Satisfaction</h3>
+                        <div style="font-size: 1.5em; font-weight: bold;">${data.current_metrics.satisfaction}/5</div>
+                    </div>
+                    <div class="metric">
+                        <h3>🛒 Transactions</h3>
+                        <div style="font-size: 1.5em; font-weight: bold;">${data.current_metrics.transactions}</div>
+                    </div>
+                `;
+                document.getElementById('metrics').innerHTML = metricsHtml;
+                
+                // Update alerts
+                let alertsHtml = '<h2>Active Alerts</h2>';
+                if (data.alerts.length === 0) {
+                    alertsHtml += '<div class="alert success">✅ No active alerts</div>';
+                } else {
+                    data.alerts.forEach(alert => {
+                        alertsHtml += `
+                            <div class="alert ${alert.status.toLowerCase()}">
+                                <strong>${alert.icon} ${alert.metric} - ${alert.status}</strong><br>
+                                ${alert.message}
+                            </div>
+                        `;
+                    });
+                }
+                
+                // Add summary
+                alertsHtml += `
+                    <div style="margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 8px;">
+                        <strong>Alert Summary:</strong> 
+                        ${data.summary.critical} Critical • 
+                        ${data.summary.warnings} Warnings • 
+                        ${data.summary.success} Success • 
+                        System Status: <span style="color: ${data.summary.system_status === 'HEALTHY' ? 'green' : data.summary.system_status === 'WARNING' ? 'orange' : 'red'}">${data.summary.system_status}</span>
+                    </div>
+                `;
+                
+                document.getElementById('alerts').innerHTML = alertsHtml;
+                
+            } catch (error) {
+                document.getElementById('alerts').innerHTML = `
+                    <div class="alert critical">
+                        ❌ Error loading alerts: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Load alerts on page load
+        document.addEventListener('DOMContentLoaded', loadAlerts);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadAlerts, 30000);
+    </script>
+</body>
+</html>

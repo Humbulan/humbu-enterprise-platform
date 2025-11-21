@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart AI Business Advisor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+        .metric { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #007bff; }
+        .chat { border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; height: 400px; overflow-y: auto; margin: 20px 0; background: #fafbfc; }
+        .message { margin: 10px 0; padding: 12px; border-radius: 8px; line-height: 1.5; }
+        .user { background: #007bff; color: white; margin-left: 20%; }
+        .ai { background: #28a745; color: white; margin-right: 20%; }
+        .system { background: #6c757d; color: white; text-align: center; }
+        .input-area { display: flex; gap: 10px; margin-top: 20px; }
+        input { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; }
+        button { padding: 12px 24px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #c82333; }
+        .suggestions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .suggestion { padding: 10px; background: #e9ecef; border: none; border-radius: 5px; cursor: pointer; text-align: left; }
+        .suggestion:hover { background: #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Smart AI Business Advisor</h1>
+            <p>Get personalized advice based on your actual business metrics</p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <strong>💰 Revenue</strong><br>
+                $32,480.75
+            </div>
+            <div class="metric">
+                <strong>👥 Customers</strong><br>
+                189
+            </div>
+            <div class="metric">
+                <strong>⭐ Satisfaction</strong><br>
+                4.9/5
+            </div>
+            <div class="metric">
+                <strong>🛒 Transactions</strong><br>
+                111
+            </div>
+        </div>
+
+        <div class="chat" id="chat">
+            <div class="message system">Smart AI Advisor is ready! Your business metrics will be used to provide personalized advice.</div>
+        </div>
+
+        <div class="suggestions">
+            <button class="suggestion" onclick="askQuestion('How can I increase revenue?')">💰 Increase Revenue</button>
+            <button class="suggestion" onclick="askQuestion('How can I get more customers?')">👥 Get More Customers</button>
+            <button class="suggestion" onclick="askQuestion('What growth strategies should I focus on?')">📈 Growth Strategies</button>
+            <button class="suggestion" onclick="askQuestion('How can I improve customer satisfaction?')">⭐ Improve Satisfaction</button>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="input" placeholder="Ask any business question..." onkeypress="if(event.key=='Enter') askAI()">
+            <button onclick="askAI()">Ask AI</button>
+        </div>
+    </div>
+
+    <script>
+        const businessMetrics = {
+            revenue: '32480.75',
+            customers: 189,
+            satisfaction: 4.9,
+            transactions: 111
+        };
+
+        function addMessage(type, text) {
+            const chat = document.getElementById('chat');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            chat.appendChild(msg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function askQuestion(question) {
+            document.getElementById('input').value = question;
+            askAI();
+        }
+
+        async function askAI() {
+            const input = document.getElementById('input');
+            const question = input.value.trim();
+            if (!question) return;
+            
+            addMessage('user', question);
+            input.value = '';
+            
+            // Create smart context
+            const context = `[BUSINESS CONTEXT: Revenue=$${businessMetrics.revenue}, Customers=${businessMetrics.customers}, Satisfaction=${businessMetrics.satisfaction}/5, Transactions=${businessMetrics.transactions}]`;
+            const fullMessage = context + ' ' + question;
+            
+            try {
+                const response = await fetch('http://localhost:8001/ai/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: fullMessage})
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('ai', data.response);
+                } else {
+                    addMessage('ai', `Error: Server returned ${response.status}`);
+                }
+            } catch (error) {
+                addMessage('ai', `Connection failed: ${error.message}`);
+            }
+        }
+
+        // Test connection on load
+        setTimeout(() => {
+            addMessage('system', 'Testing connection to Smart AI Bridge...');
+            fetch('http://localhost:8001/ai/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: 'test'})
+            })
+            .then(response => {
+                if (response.ok) {
+                    addMessage('system', '✅ Connected to Smart AI Bridge! Ask away!');
+                }
+            })
+            .catch(() => {
+                addMessage('system', '❌ Cannot connect to AI Bridge. Make sure it is running on port 8004.');
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

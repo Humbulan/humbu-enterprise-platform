@@ -1,0 +1,13 @@
+{
+  "name": "utility-api",
+  "version": "1.0.0",
+  "description": "Calculator and utility API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5"
+  }
+}

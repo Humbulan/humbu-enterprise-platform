@@ -1,0 +1,7 @@
+nohup: ignoring input
+🚀 Humbu Platform Starting in PUBLIC mode
+🤖 AI Service: http://127.0.0.1:8100/chat
+📊 BI Service: http://127.0.0.1:8101/api/alerts
+🚀 API Gateway running on http://0.0.0.0:8102
+🎯 Public deployment ready!
+🌐 Public URL: https://abc-its-deviation-fate.trycloudflare.com

@@ -1,0 +1,139 @@
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = express();
+const HTTP_PORT = process.env.HTTP_PORT || 8102;
+const HTTPS_PORT = process.env.HTTPS_PORT || 8143;
+
+// SSL configuration
+const sslOptions = {
+    key: fs.readFileSync('./ssl/key.pem'),
+    cert: fs.readFileSync('./ssl/cert.pem')
+};
+
+app.use(express.json());
+
+// Service discovery and routing
+const services = {
+    'user-service': 'http://user-service:8201',
+    'auth-service': 'http://auth-service:8202', 
+    'payment-service': 'http://payment-service:8203',
+    'notification-service': 'http://notification-service:8204'
+};
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        message: 'Humbu Microservices API Gateway',
+        timestamp: new Date().toISOString(),
+        services: Object.keys(services),
+        ssl: {
+            enabled: true,
+            https_port: HTTPS_PORT
+        }
+    });
+});
+
+// Service routing
+app.use('/api/users', createProxyMiddleware({
+    target: services['user-service'],
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/users': '/users'
+    },
+    onError: (err, req, res) => {
+        res.status(503).json({
+            error: 'User service unavailable',
+            message: 'Please try again later'
+        });
+    }
+}));
+
+app.use('/api/auth', createProxyMiddleware({
+    target: services['auth-service'],
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/auth': '/auth'
+    },
+    onError: (err, req, res) => {
+        res.status(503).json({
+            error: 'Auth service unavailable',
+            message: 'Authentication temporarily disabled'
+        });
+    }
+}));
+
+app.use('/api/payments', createProxyMiddleware({
+    target: services['payment-service'],
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api/payments': '/payments'
+    },
+    onError: (err, req, res) => {
+        res.status(503).json({
+            error: 'Payment service unavailable',
+            message: 'Payment processing temporarily disabled'
+        });
+    }
+}));
+
+// Service status endpoint
+app.get('/api/services/status', async (req, res) => {
+    const status = {};
+    
+    for (const [serviceName, serviceUrl] of Object.entries(services)) {
+        try {
+            const response = await fetch(`${serviceUrl}/health`);
+            status[serviceName] = {
+                status: 'healthy',
+                url: serviceUrl
+            };
+        } catch (error) {
+            status[serviceName] = {
+                status: 'unhealthy',
+                url: serviceUrl,
+                error: error.message
+            };
+        }
+    }
+    
+    res.json({
+        timestamp: new Date().toISOString(),
+        services: status
+    });
+});
+
+// Create servers
+const httpsServer = https.createServer(sslOptions, app);
+const httpServer = http.createServer(app);
+
+// Start servers
+httpsServer.listen(HTTPS_PORT, '0.0.0.0', () => {
+    console.log(`🔒 HTTPS Gateway running on port ${HTTPS_PORT}`);
+});
+
+httpServer.listen(HTTP_PORT, '0.0.0.0', () => {
+    console.log(`🌐 HTTP Gateway running on port ${HTTP_PORT}`);
+    console.log('');
+    console.log('🏰 HUMBU MICROSERVICES PLATFORM - DOCKER COMPOSE');
+    console.log('===============================================');
+    console.log('✅ SSL/TLS Encryption Enabled');
+    console.log('✅ Microservices Architecture');
+    console.log('✅ API Gateway Routing');
+    console.log('✅ Service Discovery');
+    console.log('');
+    console.log('🌐 ACCESS POINTS:');
+    console.log(`   HTTP:  http://localhost:${HTTP_PORT}/health`);
+    console.log(`   HTTPS: https://localhost:${HTTPS_PORT}/health`);
+    console.log('');
+    console.log('🔧 AVAILABLE SERVICES:');
+    Object.keys(services).forEach(service => {
+        console.log(`   📍 ${service}`);
+    });
+    console.log('');
+    console.log('🚀 DOCKER COMPOSE READY!');
+});

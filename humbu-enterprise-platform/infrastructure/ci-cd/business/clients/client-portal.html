@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal - Container Solutions Pro</title>
+    <!-- FIXED PATH: Use relative path from business/clients/ to static/ -->
+    <link rel="stylesheet" href="../static/css/prism.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Container Solutions Pro</h1>
+            <p>Client Management Portal</p>
+        </div>
+        
+        <div class="card">
+            <h2>Welcome to Your Client Portal</h2>
+            <p>Access your container solutions and configurations</p>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="showDockerConfig()">Docker Configurations</button>
+                <button class="btn" onclick="showKubernetesConfig()">Kubernetes Manifests</button>
+                <button class="btn" onclick="showAutomationScripts()">Automation Scripts</button>
+            </div>
+        </div>
+        
+        <div id="output" class="card">
+            <h3>Select a configuration type to get started</h3>
+        </div>
+    </div>
+
+    <!-- FIXED PATH -->
+    <script src="../static/js/prism.js"></script>
+    <script>
+        // Fixed language definitions
+        Prism.languages.dockerfile = {
+            'comment': { pattern: /#.*/, greedy: true },
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'keyword': { pattern: /(FROM|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL)\b/, lookbehind: true, greedy: true }
+        };
+
+        Prism.languages.yaml = {
+            'comment': /#.*/,
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'number': /\b\d+\b/,
+            'boolean': /\b(?:true|false)\b/,
+            'punctuation': /---|[:[\]{}\-,|>?]|\.\.\./
+        };
+
+        Prism.languages.bash = {
+            'comment': [{ pattern: /(^|[^"{\\$])#.*/, lookbehind: true }, { pattern: /^#!.+/, greedy: true }],
+            'string': { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: true },
+            'variable': /\$(?:\w+|[?$!@#*_-])/,
+            'function': /\b(?:echo|printf|cd|pwd|ls|cat|grep|find|docker|kubectl)\b/,
+            'keyword': /\b(?:if|then|else|elif|fi|for|while|do|done|case|esac|function)\b/
+        };
+
+        function showDockerConfig() {
+            document.getElementById('output').innerHTML = `
+                <h3>🐳 Docker Configuration</h3>
+                <pre><code class="language-dockerfile">
+# Production Dockerfile - CORRECTED
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:18-alpine AS runtime  
+WORKDIR /app
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+
+USER nextjs
+EXPOSE 3000
+ENV NODE_ENV production
+
+CMD ["node", "server.js"]
+                </code></pre>
+                <button class="btn" onclick="downloadConfig('Dockerfile')">Download Dockerfile</button>
+            `;
+            Prism.highlightAll();
+        }
+        
+        function showKubernetesConfig() {
+            document.getElementById('output').innerHTML = `
+                <h3>☸️ Kubernetes Deployment</h3>
+                <pre><code class="language-yaml">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: myapp:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+                </code></pre>
+                <button class="btn" onclick="downloadConfig('deployment.yaml')">Download YAML</button>
+            `;
+            Prism.highlightAll();
+        }
+        
+        function showAutomationScripts() {
+            document.getElementById('output').innerHTML = `
+                <h3>⚡ Automation Script</h3>
+                <pre><code class="language-bash">
+#!/bin/bash
+
+# Container deployment script
+echo "🚀 Deploying Container Stack..."
+
+# Build Docker image
+docker build -t my-app:latest .
+
+# Start services
+docker-compose up -d
+
+# Check status
+docker-compose ps
+
+echo "✅ Deployment complete!"
+                </code></pre>
+                <button class="btn" onclick="downloadConfig('deploy.sh')">Download Script</button>
+            `;
+            Prism.highlightAll();
+        }
+        
+        function downloadConfig(filename) {
+            alert('Downloading: ' + filename);
+            // Download logic would go here
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Prism) {
+                console.log('✅ PrismJS loaded successfully!');
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --background: #f8fafc;
+            --surface: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--background);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+        }
+        
+        pre[class*="language-"] {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</body>
+</html>

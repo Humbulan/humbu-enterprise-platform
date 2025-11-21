@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Business Intelligence - Trend Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: 800px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .metrics-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-card.trend-view {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .metric-trend {
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .trend-up { color: #4caf50; }
+        .trend-down { color: #f44336; }
+        .trend-neutral { color: #ff9800; }
+
+        .trend-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Chart Modal */
+        .chart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .chart-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .chart-btn {
+            padding: 10px 20px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .forecast-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+
+        .trend-overview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .trend-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .trend-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mini-chart {
+            height: 120px;
+            margin-top: 15px;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #fafbfc;
+            max-height: 400px;
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 12px;
+            line-height: 1.6;
+            max-width: 80%;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background: white;
+            color: #2c3e50;
+            border: 1px solid #e9ecef;
+            margin-right: auto;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        #questionInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        #sendButton {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .ai-response {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📈 AI Business Intelligence</h1>
+            <p>Trend Analysis & Forecasting Dashboard</p>
+        </div>
+
+        <div class="content">
+            <!-- Sidebar with Clickable Metrics -->
+            <div class="sidebar">
+                <div class="metrics-grid">
+                    <div class="metric-card" onclick="showTrendChart('revenue')">
+                        <div class="trend-indicator">📊</div>
+                        <div class="metric-label">💰 Monthly Revenue</div>
+                        <div class="metric-value">$32,480.75</div>
+                        <div class="metric-trend trend-up">↑ 12.5% growth</div>
+                        <div style="font-size: 0.8em; color: #666;">Click to view trends</div>
+                    </div>
+                    
+                    <div class="metric-card" onclick="showTrendChart('customers')">
+                        <div class="trend-indicator">📊</div>
+                        <div class="metric-label">👥 Total Customers</div>
+                        <div class="metric-value">189</div>
+                        <div class="metric-trend trend-up">↑ 8 new this week</div>
+                        <div style="font-size: 0.8em; color: #666;">Click to view trends</div>
+                    </div>
+                    
+                    <div class="metric-card" onclick="showTrendChart('satisfaction')">
+                        <div class="trend-indicator">📊</div>
+                        <div class="metric-label">⭐ Satisfaction Score</div>
+                        <div class="metric-value">4.9/5</div>
+                        <div class="metric-trend trend-neutral">Excellent rating</div>
+                        <div style="font-size: 0.8em; color: #666;">Click to view trends</div>
+                    </div>
+                    
+                    <div class="metric-card" onclick="showTrendChart('transactions')">
+                        <div class="trend-indicator">📊</div>
+                        <div class="metric-label">🛒 Today's Transactions</div>
+                        <div class="metric-value">111</div>
+                        <div class="metric-trend trend-up">Average: $292.62</div>
+                        <div style="font-size: 0.8em; color: #666;">Click to view trends</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50;">🚀 Quick Analysis</h3>
+                    <button class="action-btn" onclick="askQuestion('Analyze my revenue trends and forecast next month')">📈 Revenue Forecast</button>
+                    <button class="action-btn" onclick="askQuestion('Predict customer growth for next quarter')">👥 Customer Projection</button>
+                    <button class="action-btn" onclick="askQuestion('Show me seasonal trends in transactions')">🛒 Seasonal Analysis</button>
+                    <button class="action-btn" onclick="askQuestion('Create growth strategy based on trends')">🎯 Growth Strategy</button>
+                </div>
+            </div>
+
+            <!-- Main Content with Trend Overview -->
+            <div class="main-content">
+                <div class="trend-overview">
+                    <div class="trend-card">
+                        <h3>📈 Revenue Trends</h3>
+                        <p>30-day performance with AI forecasting</p>
+                        <div class="mini-chart">
+                            <canvas id="revenueMiniChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="trend-card">
+                        <h3>👥 Customer Growth</h3>
+                        <p>Weekly customer acquisition trends</p>
+                        <div class="mini-chart">
+                            <canvas id="customersMiniChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h3>🤖 Trend Analysis AI</h3>
+                        <p>Ask about patterns, forecasts, and growth strategies</p>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system">
+                            <strong>📈 Trend Analysis Activated!</strong><br>
+                            Click any metric card to view detailed trends and AI forecasts.<br>
+                            I can analyze patterns and predict future performance!
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <div class="input-group">
+                            <input type="text" id="questionInput" 
+                                   placeholder="Ask about trends, forecasts, or growth patterns..."
+                                   onkeypress="if(event.key=='Enter') askAI()">
+                            <button id="sendButton" onclick="askAI()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Modal -->
+    <div class="chart-modal" id="chartModal">
+        <div class="chart-container">
+            <button class="close-modal" onclick="closeChartModal()">×</button>
+            <div class="chart-header">
+                <h2 id="chartTitle">Trend Analysis</h2>
+                <p id="chartSubtitle">Historical data with AI forecasting</p>
+            </div>
+            
+            <div class="chart-actions">
+                <button class="chart-btn active" onclick="changeChartType('line')">Line Chart</button>
+                <button class="chart-btn" onclick="changeChartType('bar')">Bar Chart</button>
+                <button class="chart-btn" onclick="getAIForecast()">AI Forecast</button>
+            </div>
+
+            <div class="forecast-info" id="forecastInfo" style="display: none;">
+                <strong>🤖 AI Forecast:</strong> <span id="forecastText"></span>
+            </div>
+
+            <div style="height: 400px;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Historical Data Structure
+        const historicalData = {
+            revenue: [
+                { date: '2025-10-01', value: 29800 },
+                { date: '2025-10-08', value: 30500 },
+                { date: '2025-10-15', value: 31200 },
+                { date: '2025-10-22', value: 31800 },
+                { date: '2025-10-29', value: 32480 },
+                { date: '2025-11-05', value: 33100 }
+            ],
+            customers: [
+                { date: '2025-09-01', value: 165 },
+                { date: '2025-09-15', value: 172 },
+                { date: '2025-10-01', value: 178 },
+                { date: '2025-10-15', value: 183 },
+                { date: '2025-11-01', value: 189 },
+                { date: '2025-11-08', value: 194 }
+            ],
+            satisfaction: [
+                { date: '2025-10-01', value: 4.7 },
+                { date: '2025-10-08', value: 4.8 },
+                { date: '2025-10-15', value: 4.8 },
+                { date: '2025-10-22', value: 4.9 },
+                { date: '2025-10-29', value: 4.9 },
+                { date: '2025-11-05', value: 4.9 }
+            ],
+            transactions: [
+                { date: '2025-10-25', value: 95 },
+                { date: '2025-10-26', value: 102 },
+                { date: '2025-10-27', value: 98 },
+                { date: '2025-10-28', value: 105 },
+                { date: '2025-10-29', value: 108 },
+                { date: '2025-10-30', value: 111 },
+                { date: '2025-11-01', value: 115 }
+            ]
+        };
+
+        // Chart instances
+        let trendChart = null;
+        let currentChartType = 'line';
+        let currentMetric = '';
+
+        // Initialize mini charts
+        function initializeMiniCharts() {
+            // Revenue mini chart
+            new Chart(document.getElementById('revenueMiniChart'), {
+                type: 'line',
+                data: {
+                    labels: historicalData.revenue.map(d => d.date.substr(5)),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: historicalData.revenue.map(d => d.value),
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+
+            // Customers mini chart
+            new Chart(document.getElementById('customersMiniChart'), {
+                type: 'line',
+                data: {
+                    labels: historicalData.customers.map(d => d.date.substr(5)),
+                    datasets: [{
+                        label: 'Customers',
+                        data: historicalData.customers.map(d => d.value),
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Show trend chart modal
+        function showTrendChart(metric) {
+            currentMetric = metric;
+            const modal = document.getElementById('chartModal');
+            const title = document.getElementById('chartTitle');
+            const subtitle = document.getElementById('chartSubtitle');
+            
+            // Set titles based on metric
+            const titles = {
+                revenue: '💰 Revenue Trends',
+                customers: '👥 Customer Growth',
+                satisfaction: '⭐ Satisfaction Trends', 
+                transactions: '🛒 Transaction History'
+            };
+            
+            const subtitles = {
+                revenue: '30-day revenue performance with forecasting',
+                customers: 'Weekly customer acquisition trends',
+                satisfaction: 'Customer satisfaction over time',
+                transactions: 'Daily transaction volume'
+            };
+            
+            title.textContent = titles[metric];
+            subtitle.textContent = subtitles[metric];
+            
+            // Render chart
+            renderTrendChart(metric, 'line');
+            
+            modal.style.display = 'flex';
+        }
+
+        // Close chart modal
+        function closeChartModal() {
+            document.getElementById('chartModal').style.display = 'none';
+            document.getElementById('forecastInfo').style.display = 'none';
+        }
+
+        // Change chart type
+        function changeChartType(type) {
+            currentChartType = type;
+            renderTrendChart(currentMetric, type);
+            
+            // Update button states
+            document.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Render the main trend chart
+        function renderTrendChart(metric, type = 'line') {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            const data = historicalData[metric];
+            
+            if (trendChart) {
+                trendChart.destroy();
+            }
+            
+            const chartConfig = {
+                type: type,
+                data: {
+                    labels: data.map(d => {
+                        const date = new Date(d.date);
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: getMetricLabel(metric),
+                        data: data.map(d => d.value),
+                        borderColor: getChartColor(metric),
+                        backgroundColor: getChartColor(metric, 0.1),
+                        tension: 0.4,
+                        fill: type === 'line'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: getMetricLabel(metric) + ' Trend' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${getMetricLabel(metric)}: ${formatValue(metric, context.parsed.y)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: metric !== 'satisfaction',
+                            ticks: {
+                                callback: function(value) {
+                                    return formatValue(metric, value);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            trendChart = new Chart(ctx, chartConfig);
+        }
+
+        // Get AI forecast
+        function getAIForecast() {
+            const forecastInfo = document.getElementById('forecastInfo');
+            const forecastText = document.getElementById('forecastText');
+            
+            // Mock AI forecast - in real implementation, this would call your AI bridge
+            const forecasts = {
+                revenue: "Based on current trends, revenue is projected to reach $34,200 by next month (+5.3% growth)",
+                customers: "Customer base expected to reach 210 by end of month, hitting your target of 200+ customers",
+                satisfaction: "Satisfaction trending toward 4.95/5, maintaining excellent customer experience",
+                transactions: "Daily transactions forecast to reach 125-130 range with current growth patterns"
+            };
+            
+            forecastText.textContent = forecasts[currentMetric];
+            forecastInfo.style.display = 'block';
+            
+            // Add forecast to chat
+            addMessage('ai', `📊 **AI Forecast for ${getMetricLabel(currentMetric)}**\n\n${forecasts[currentMetric]}\n\nThis projection is based on your historical trend analysis.`);
+        }
+
+        // Helper functions
+        function getMetricLabel(metric) {
+            const labels = {
+                revenue: 'Revenue',
+                customers: 'Customers',
+                satisfaction: 'Satisfaction',
+                transactions: 'Transactions'
+            };
+            return labels[metric];
+        }
+
+        function getChartColor(metric, alpha = 1) {
+            const colors = {
+                revenue: `rgba(52, 152, 219, ${alpha})`,
+                customers: `rgba(231, 76, 60, ${alpha})`,
+                satisfaction: `rgba(243, 156, 18, ${alpha})`,
+                transactions: `rgba(155, 89, 182, ${alpha})`
+            };
+            return colors[metric];
+        }
+
+        function formatValue(metric, value) {
+            if (metric === 'revenue') return `$${value.toLocaleString()}`;
+            if (metric === 'satisfaction') return `${value}/5`;
+            return value.toString();
+        }
+
+        // Chat functionality
+        function addMessage(type, text) {
+            const chat = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            
+            if (type === 'ai') {
+                msg.innerHTML = `<div class="ai-response">${text}</div>`;
+            } else {
+                msg.textContent = text;
+            }
+            
+            chat.appendChild(msg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function askQuestion(question) {
+            document.getElementById('questionInput').value = question;
+            askAI();
+        }
+
+        async function askAI() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            if (!question) return;
+            
+            addMessage('user', question);
+            input.value = '';
+            
+            // Add trend context to the question
+            const trendContext = `[TREND CONTEXT: Revenue has grown from $29,800 to $32,480 over 30 days (+8.7%). Customers grew from 165 to 189 in 60 days. Satisfaction improved from 4.7 to 4.9. Transactions show daily growth pattern.]`;
+            const fullMessage = trendContext + ' ' + question;
+            
+            try {
+                const response = await fetch('http://localhost:8001/ai/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: fullMessage})
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('ai', data.response);
+                } else {
+                    addMessage('ai', `Error: ${response.status}`);
+                }
+            } catch (error) {
+                addMessage('ai', `Connection error: ${error.message}`);
+            }
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMiniCharts();
+            addMessage('system', '📈 Trend charts initialized! Click any metric card to view detailed analysis.');
+            
+            // Auto-focus input
+            document.getElementById('questionInput').focus();
+        });
+    </script>
+</body>
+</html>

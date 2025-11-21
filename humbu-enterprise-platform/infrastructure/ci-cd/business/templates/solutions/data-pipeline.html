@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Pipeline Solution - Container Solutions Pro</title>
+    <link rel="stylesheet" href="../../static/css/prism.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Data Processing Pipeline</h1>
+        
+        <div class="solution-info">
+            <h2>Real-time Data Analytics Platform</h2>
+            <p>Complete data pipeline with Kafka, Spark, and real-time dashboards</p>
+        </div>
+
+        <div class="code-section">
+            <h3>Data Pipeline Stack</h3>
+            <pre><code class="language-yaml">
+version: '3.8'
+
+services:
+  # Apache Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  # Apache Kafka
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # Apache Spark
+  spark-master:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "8080:8080"
+    environment:
+      - SPARK_MODE=master
+
+  spark-worker:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+
+  # Data Processing
+  data-processor:
+    build: ./data-processor
+    depends_on:
+      - kafka
+      - spark-master
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+      - SPARK_MASTER=spark://spark-master:7077
+
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: analytics
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  postgres_data:
+            </code></pre>
+        </div>
+
+        <div class="code-section">
+            <h3>Spark Streaming Job</h3>
+            <pre><code class="language-python">
+from pyspark.sql import SparkSession
+from pyspark.streaming import StreamingContext
+
+# Initialize Spark Session
+spark = SparkSession.builder \
+    .appName("RealTimeDataProcessor") \
+    .config("spark.sql.adaptive.enabled", "true") \
+    .getOrCreate()
+
+# Read from Kafka
+df = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "kafka:9092") \
+    .option("subscribe", "sensor-data") \
+    .load()
+
+# Process streaming data
+processed_df = df.selectExpr("CAST(value AS STRING)") \
+    .select("value") \
+    .groupBy("value") \
+    .count()
+
+# Write to PostgreSQL
+def write_to_postgres(batch_df, batch_id):
+    batch_df.write \
+        .format("jdbc") \
+        .option("url", "jdbc:postgresql://postgres:5432/analytics") \
+        .option("dbtable", "real_time_metrics") \
+        .option("user", "user") \
+        .option("password", "pass") \
+        .mode("append") \
+        .save()
+
+# Start streaming
+query = processed_df.writeStream \
+    .foreachBatch(write_to_postgres) \
+    .outputMode("update") \
+    .start()
+
+query.awaitTermination()
+            </code></pre>
+        </div>
+    </div>
+
+    <script src="../../static/js/prism.js"></script>
+    <script>
+        // Add Python syntax highlighting
+        Prism.languages.python = {
+            'comment': {
+                pattern: /(^|[^\\])#.*/,
+                lookbehind: true
+            },
+            'string': {
+                pattern: /("|')(?:\\.|(?!\1)[^\\\r\n])*\1/,
+                greedy: true
+            },
+            'keyword': /\b(?:import|from|as|def|class|return|if|elif|else|for|while|try|except|finally|with)\b/,
+            'boolean': /\b(?:True|False)\b/,
+            'number': /\b\d+(?:\.\d+)?\b/,
+            'function': /\b[a-zA-Z_][a-zA-Z0-9_]*(?=\()/,
+            'operator': /[=+\-*/<>]=?|\.{3}/,
+            'punctuation': /[{}[\];(),.:]/
+        };
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .solution-info { background: #f0f8ff; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .code-section { margin: 30px 0; }
+    </style>
+</body>
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Humbu SaaS – Ship Faster | humbu.store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ship faster with Humbu SaaS. One command and your backend is live. No credit card required.">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="manifest" href="data:application/manifest+json,{'name':'Humbu SaaS','short_name':'Humbu','start_url':'/','display':'standalone','theme_color':'#6366f1'}">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #121212;
+      --primary: #6366f1;
+      --secondary: #a855f7;
+      --accent: #10b981;
+      --card: #f5f5f5;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --text-muted: #6b7280;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --fg: #eaeaea;
+        --card: #1e1e1e;
+        --shadow: rgba(255, 255, 255, 0.05);
+        --text-muted: #9ca3af;
+      }
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    /* Header & Navigation */
+    header {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--shadow);
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    
+    .logo-icon {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--fg);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 0 2rem;
+    }
+    
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-shift 3s ease-in-out infinite;
+      background-size: 200% 200%;
+    }
+    
+    .subtitle {
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      color: var(--text-muted);
+    }
+    
+    /* Business Profile Section */
+    .profile-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+      justify-content: center;
+      margin: 3rem 0;
+      padding: 2rem;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .profile-text {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .profile-text h2 {
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+    }
+    
+    .profile-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .detail-icon {
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    /* Pricing Section */
+    .pricing-section {
+      padding: 3rem 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+    
+    .toggle-switch {
+      display: inline-flex;
+      align-items: center;
+      background: var(--card);
+      border-radius: 999px;
+      padding: .25rem;
+      margin: 2rem auto;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .toggle-switch span {
+      padding: .6rem 1.2rem;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .toggle-switch .active {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    .cards {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px var(--shadow);
+    }
+    
+    .card.featured {
+      border: 2px solid var(--primary);
+      transform: scale(1.05);
+    }
+    
+    .card.featured:hover {
+      transform: scale(1.05) translateY(-8px);
+    }
+    
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+    
+    .price-period {
+      font-size: 1rem;
+      font-weight: normal;
+      opacity: 0.7;
+    }
+    
+    .card ul {
+      list-style: none;
+      margin: 1rem 0;
+      flex-grow: 1;
+    }
+    
+    .card li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .card li:before {
+      content: "✓";
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .cta {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: auto;
+    }
+    
+    .cta:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .cta.secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    
+    .cta.secondary:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    /* Testimonials */
+    .testimonials {
+      padding: 4rem 0;
+      background: var(--card);
+      margin: 3rem 0;
+    }
+    
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .testimonial {
+      background: var(--bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .author-info h4 {
+      margin-bottom: 0.25rem;
+    }
+    
+    .author-info p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    /* FAQ Section */
+    .faq-section {
+      padding: 3rem 0;
+    }
+    
+    .faq-grid {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .faq-question {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .faq-answer {
+      color: var(--text-muted);
+    }
+    
+    /* Footer */
+    footer {
+      padding: 3rem 0 2rem;
+      border-top: 1px solid var(--shadow);
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-column h4 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--shadow);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--card);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fade-in 0.8s ease-out forwards;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .card.featured {
+        transform: none;
+      }
+      
+      .card.featured:hover {
+        transform: translateY(-8px);
+      }
+      
+      .profile-section {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <a href="#" class="logo">
+          <div class="logo-icon">H</div>
+          Humbu SaaS
+        </a>
+        <div class="nav-links">
+          <a href="#pricing">Pricing</a>
+          <a href="#testimonials">Testimonials</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1 class="gradient-text">Ship faster with <br>Humbu SaaS</h1>
+        <p class="subtitle">One command and your backend is live. No credit card required.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="profile-section fade-in">
+        <div class="profile-text">
+          <h2>About Humbu SaaS</h2>
+          <p>We're a dedicated team of developers and designers committed to helping businesses ship faster with our powerful backend-as-a-service platform. Founded in 2020, we've helped over 1,000 companies accelerate their development process.</p>
+          
+          <div class="profile-details">
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span>San Francisco, CA</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📧</span>
+              <span>Humbulani@humbu.store</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📞</span>
+              <span>+1 (555) 123-4567</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">🌐</span>
+              <span>www.humbu.store</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="pricing-section">
+      <div class="container">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        
+        <div class="toggle-switch">
+          <span class="active" data-bill="monthly">Monthly</span>
+          <span data-bill="yearly">Yearly <small>(2 months free)</small></span>
+        </div>
+
+        <div class="cards">
+          <div class="card fade-in">
+            <h3>Starter</h3>
+            <div class="price" data-price-m="9" data-price-y="90">$<span>9</span><span class="price-period">/month</span></div>
+            <ul>
+              <li>3 projects</li>
+              <li>50 GB bandwidth</li>
+              <li>Community support</li>
+              <li>Basic analytics</li>
+            </ul>
+            <button class="cta" onclick="signup('starter')">Get Started</button>
+          </div>
+
+          <div class="card featured fade-in">
+            <h3>Pro</h3>
+            <div class="price" data-price-m="19" data-price-y="190">$<span>19</span><span class="price-period">/month</span></div>
+            <ul>
+              <li>Unlimited projects</li>
+              <li>500 GB bandwidth</li>
+              <li>Priority email support</li>
+              <li>Advanced analytics</li>
+              <li>Custom domains</li>
+            </ul>
+            <button class="cta" onclick="signup('pro')">Get Started</button>
+          </div>
+
+          <div class="card fade-in">
+            <h3>Enterprise</h3>
+            <div class="price" data-price-m="49" data-price-y="490">$<span>49</span><span class="price-period">/month</span></div>
+            <ul>
+              <li>Custom contracts</li>
+              <li>99.9% SLA guarantee</li>
+              <li>Dedicated account manager</li>
+              <li>White-label options</li>
+              <li>24/7 phone support</li>
+            </ul>
+            <button class="cta secondary" onclick="contactSales()">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+      <div class="container">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="testimonial-grid">
+          <div class="testimonial fade-in">
+            <p class="testimonial-text">"Humbu SaaS cut our development time by 60%. The platform is intuitive and their support team is incredibly responsive."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">SJ</div>
+              <div class="author-info">
+                <h4>Sarah Johnson</h4>
+                <p>CTO, TechFlow Inc.</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial fade-in">
+            <p class="testimonial-text">"We switched to Humbu last quarter and haven't looked back. The reliability and performance are unmatched in this price range."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">MR</div>
+              <div class="author-info">
+                <h4>Michael Rodriguez</h4>
+                <p>Lead Developer, InnovateCo</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial fade-in">
+            <p class="testimonial-text">"The onboarding process was seamless, and we were up and running in under an hour. Highly recommended for startups!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">AK</div>
+              <div class="author-info">
+                <h4>Amanda Kim</h4>
+                <p>Founder, LaunchPad</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+      <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-grid">
+          <div class="faq-item fade-in">
+            <h3 class="faq-question">Can I change plans at any time?</h3>
+            <p class="faq-answer">Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any differences in billing.</p>
+          </div>
+          <div class="faq-item fade-in">
+            <h3 class="faq-question">Is there a free trial?</h3>
+            <p class="faq-answer">All paid plans come with a 14-day free trial. No credit card is required to start your trial.</p>
+          </div>
+          <div class="faq-item fade-in">
+            <h3 class="faq-question">What payment methods do you accept?</h3>
+            <p class="faq-answer">We accept all major credit cards, PayPal, and for Enterprise plans, we can also process bank transfers.</p>
+          </div>
+          <div class="faq-item fade-in">
+            <h3 class="faq-question">Do you offer discounts for nonprofits?</h3>
+            <p class="faq-answer">Yes, we offer a 25% discount for registered nonprofit organizations. Contact our sales team for more information.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>Humbu SaaS</h4>
+          <p>Ship faster with our powerful backend-as-a-service platform.</p>
+        </div>
+        <div class="footer-column">
+          <h4>Product</h4>
+          <ul class="footer-links">
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#integrations">Integrations</a></li>
+            <li><a href="#documentation">Documentation</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#press">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <ul class="footer-links">
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#status">Status</a></li>
+            <li><a href="#security">Security</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Humbu.store. All rights reserved. | Questions? Email <a href="mailto:Humbulani@humbu.store">Humbulani@humbu.store</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="notification" id="notification">
+    <span id="notification-text"></span>
+  </div>
+
+  <script>
+    // Pricing toggle functionality
+    const switcher = document.querySelector('.toggle-switch');
+    switcher.addEventListener('click', e => {
+      if (!e.target.dataset.bill) return;
+      
+      switcher.querySelectorAll('span').forEach(s => s.classList.toggle('active'));
+      const yearly = e.target.dataset.bill === 'yearly';
+      
+      document.querySelectorAll('.price').forEach(el => {
+        const price = yearly ? el.dataset.priceY : el.dataset.priceM;
+        el.querySelector('span').textContent = price;
+      });
+    });
+
+    // Enhanced sign-up flow with better UX
+    function signup(plan) {
+      const email = prompt('Enter your email to get started:');
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        showNotification('Please enter a valid email address.', 'error');
+        return;
+      }
+      
+      const users = JSON.parse(localStorage.getItem('signups') || '[]');
+      
+      // Check if email already exists
+      if (users.some(user => user.email === email)) {
+        showNotification('This email is already on our list!', 'info');
+        return;
+      }
+      
+      users.push({
+        email: email,
+        plan: plan,
+        date: new Date().toISOString()
+      });
+      
+      localStorage.setItem('signups', JSON.stringify(users));
+      showNotification(`Welcome aboard! We'll send ${plan} plan details to ${email}`);
+      
+      // Optional: Log to console for demo purposes
+      console.log('Current signups:', users);
+    }
+
+    // Enhanced contact sales function
+    function contactSales() {
+      const subject = 'Enterprise Plan Inquiry';
+      const body = `Hi Humbu Team,\n\nI am interested in the Enterprise plan. Please send me more information and pricing details.\n\nBest regards,\n[Your Name]`;
+      
+      window.open(`mailto:Humbulani@humbu.store?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    }
+
+    // Notification system
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      const notificationText = document.getElementById('notification-text');
+      
+      notificationText.textContent = message;
+      notification.className = 'notification show';
+      
+      // Add type class for styling different notification types
+      if (type) {
+        notification.classList.add(type);
+      }
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 4000);
+    }
+
+    // Fixed Service Worker registration - SIMPLIFIED VERSION
+    if ('serviceWorker' in navigator) {
+      // Create a simple service worker script
+      const swScript = `
+        self.addEventListener('install', (event) => {
+          console.log('Service Worker installing');
+          self.skipWaiting();
+        });
+
+        self.addEventListener('activate', (event) => {
+          console.log('Service Worker activating');
+        });
+
+        self.addEventListener('fetch', (event) => {
+          // Basic fetch handler - you can extend this for caching
+          event.respondWith(fetch(event.request));
+        });
+      `;
+
+      // Create a blob URL for the service worker
+      const blob = new Blob([swScript], { type: 'application/javascript' });
+      const swURL = URL.createObjectURL(blob);
+
+      // Register the service worker
+      navigator.serviceWorker.register(swURL)
+        .then(registration => {
+          console.log('SW registered successfully:', registration);
+          URL.revokeObjectURL(swURL); // Clean up the blob URL
+        })
+        .catch(error => {
+          console.log('SW registration failed:', error);
+          // Don't show error to user - it's not critical for the app
+        });
+    }
+
+    // Add some interactive elements on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add subtle animation to cards
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+      
+      // Add animation to testimonials
+      const testimonials = document.querySelectorAll('.testimonial');
+      testimonials.forEach((testimonial, index) => {
+        testimonial.style.animationDelay = `${index * 0.15}s`;
+      });
+      
+      // Add animation to FAQ items
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>
